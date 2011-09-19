@@ -19,21 +19,32 @@ Ti.App.scanner = {
 // Button Listener
 Ti.App.scanner.button.addEventListener('click', function(){
     Ti.App.barcode.scan({
-        // simple configuration for iPhone simulator
         configure: {
-            classType: "ZBarReaderController",
-            sourceType: "Album",
+            classType: "ZBarReaderViewController",
+            sourceType: "Camera",
             cameraMode: "Default",
             symbol:{
-                "QR-Code":true
+                "QR-Code":false,
+				"CODE-128":true,
+				"CODE-39":true,
+				"I25":false,
+				"DataBar":false,
+				"DataBar-Exp":false,
+				"EAN-13":false,
+				"EAN-8":false,
+				"UPC-A":false,
+				"UPC-E":false,
+				"ISBN-13":false,
+				"ISBN-10":false,
+				"PDF417":false
             }
         },
         success:function(data){
             Ti.API.info('TiBar success callback!');
             if(data && data.barcode){
                 Ti.UI.createAlertDialog({
-                    title: "Scan result",
-                    message: "Barcode: " + data.barcode + " Symbology:" + data.symbology
+                    title: "Found VIN",
+                    message: data.barcode 
                 }).show();
             }
         },
