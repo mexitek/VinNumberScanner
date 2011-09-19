@@ -10,6 +10,9 @@ Ti.include('core/basic_ui.js');
 // Modules
 //Ti.include('PATH_TO_MODULE.js');
 
+// Load TiBar MOdule
+Ti.App.barcode = require('tibar');
+
 // Templates
 //Ti.include('PATH_TO_UI_TEMPLATE.js');
 
