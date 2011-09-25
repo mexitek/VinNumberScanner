@@ -12,6 +12,7 @@ Ti.App.scanner = {
 		    width:250,
 		    bottom:20
 		}),
+		
 		// Windows
 		scannerWindow : core.ui.getWindow({ title:'Scanning VIN' })
 };
@@ -22,7 +23,15 @@ Ti.App.scanner.button.addEventListener('click', function(){
         configure: {
             classType: "ZBarReaderViewController",
             sourceType: "Camera",
-            cameraMode: "Default",
+            cameraMode: "Sequence",
+			config:{
+			        "showsCameraControls":true, // (VC)
+			        "showsZBarControls":true,
+			        "tracksSymbols":true, // the tracking rectangle that highlights barcodes
+			        "enableCache":false,
+			        "showsHelpOnFail":true,
+			        "takesPicture":false
+			},
             symbol:{
                 "QR-Code":false,
 				"CODE-128":true,
