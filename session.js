@@ -18,11 +18,8 @@ Ti.App.session = {
 	
 	// Event Handlers
 	clickDealerRow : function(e){
-		Ti.API.info( 'ROW: '+JSON.stringify(e.row) );
-		Ti.API.info( 'ROWDATA: '+JSON.stringify(e.rowData) );
-		Ti.API.info( 'SOURCE: '+JSON.stringify(e.source) );
-		Ti.API.info( 'e: '+JSON.stringify(e) );
-		Ti.API.info( 'Client Index: '+JSON.stringify( Ti.App.session.clients ) );
+		Ti.API.info( 'ROW: ');
+		Ti.API.info( e.rowData.dealerInfo );
 	}
 };
 
@@ -54,38 +51,15 @@ Ti.App.session.mainWindow.addEventListener('open',function(){
 			// Get dealer object
 			var dealer = clients[i];
 			
-			// Create a row
-			var row = core.ui.getTableViewRow();
-			//row.selectedBackgroundColor = '#fff';
-			//row.height = 70;
-			//row.className = 'datarow';
-			//row.clickName = 'row';
-			
-			var label = core.ui.getLabel({ 
-				text:dealer.BUSINESS_NAME,
-				color:'#576996',
-				font:{fontSize:16,fontWeight:'bold', fontFamily:'Arial'},
-				//left:70,
-				//top:10,
-				//height:30,
-				//width:200,
-				clickName:'user',
-			    textAlign:'center'
-			});
-			// Put it together
-			row.filter = label.text;
-			row.add(label);
-			
-			// Add custom field to row
-			row.dealer_id = 69;
-			
-			// Attatch event handler
-			row.addEventListener('click', Ti.App.session.clickDealerRow );
-			
 			// Add to collection
-			data.push(row);
+			data.push({
+				title:dealer.BUSINESS_NAME,
+				dealerInfo:dealer
+			});
 		}
 		// Add rows to table
+		Ti.App.session.table.addEventListener('click', Ti.App.session.clickDealerRow )
+			
 		Ti.App.session.table.data = data;
 		
 	});
