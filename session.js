@@ -1,8 +1,14 @@
-// Name Space
+/**
+* MDV SESSION
+*
+* Publishes:
+*	mdv-session-picked-dealer
+*
+*/
 Ti.App.session = {
 	// Global Var
-	clientId: false,
-	clients: [],
+	dealer: false,
+	dealers: [],
 	
 	// Table view
 	table: core.ui.getTableView(),
@@ -18,8 +24,15 @@ Ti.App.session = {
 	
 	// Event Handlers
 	clickDealerRow : function(e){
-		Ti.API.info( 'ROW: ');
-		Ti.API.info( e.rowData.dealerInfo );
+		//Ti.API.info( 'ROW: ');
+		//Ti.API.info( e.rowData.dealerInfo );
+		var dealer = e.rowData.dealerInfo;
+		
+		// Set global clientID
+		//Ti.App.session.dealer = dealer;
+		
+		// Publish event 
+		core.publish('mdv-session-picked-dealer', dealer);
 	}
 };
 
@@ -29,7 +42,7 @@ Ti.App.session.mainWindow.add(Ti.App.session.table);
 // Fetch all the clients when app loads
 Ti.App.session.mainWindow.addEventListener('open',function(){
 	// Check to make sure we have no clients
-	if( Ti.App.session.clients.length > 0 ) {
+	if( Ti.App.session.dealers.length > 0 ) {
 		return;
 	}
 	
@@ -41,7 +54,7 @@ Ti.App.session.mainWindow.addEventListener('open',function(){
 		}
 		
 		// Save clients
-		Ti.App.session.clients = clients;
+		Ti.App.session.dealers = clients;
 		//Ti.API.info("Captured clients?: "+JSON.stringify(Ti.App.session.clients));
 		var data = [];
 		

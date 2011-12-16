@@ -1,21 +1,45 @@
 // Name Space
 Ti.App.scanner = {
+		
+		// Vars
+		VIN: false,
+		
 		// Main Tab
 		tab : core.ui.getTab({  
     			icon:'KS_nav_ui.png',
     			title:'Scanner'
 		}),
-		// Button
+		// Components
 		button : core.ui.getButton({
-		    title: "Scan New Car",
+		    title: "Scan VIN",
 		    height:50,
 		    width:250,
 		    bottom:20
 		}),
+		/*textField : core.ui.getTextField({
+		    color:'#336699',
+		    height:35,
+		    top:10,
+		    left:10,
+		    width:250,
+		    borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
+		}),*/
+		
 		
 		// Windows
-		scannerWindow : core.ui.getWindow({ title:'Scanning VIN' })
+		scannerWindow : core.ui.getWindow({ title:'Input VIN' })
 };
+
+var textField = core.ui.getTextField({
+    color:'#336699',
+    height:35,
+    top:10,
+    left:10,
+    width:250,
+    borderStyle: Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
+	value: "Enter VIN"
+});
+
 
 // Button Listener
 Ti.App.scanner.button.addEventListener('click', function(){
@@ -66,8 +90,15 @@ Ti.App.scanner.button.addEventListener('click', function(){
     });        
 });
 
-// Window Content
+// Event Listeners
+textField.addEventListener('focus',function(e){
+	// Make default text dissappear on focus
+	e.source.value = '';
+});
+
+// Window Content 
+Ti.App.scanner.scannerWindow.add(textField);
 Ti.App.scanner.scannerWindow.add(Ti.App.scanner.button);
 
 // Attach default window
-Ti.App.scanner.tab.window = Ti.App.scanner.scannerWindow;
+//Ti.App.scanner.tab.window = Ti.App.scanner.scannerWindow;
