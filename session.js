@@ -1,80 +1,98 @@
 /**
-* MDV SESSION
+* MDV SESSION: App window for initiating a photoshoot at selected dealership.
 *
 * Publishes:
 *	mdv-session-picked-dealer
+* 
+* Depends on:
+*   mdv_api
 *
 */
-Ti.App.session = {
-	// Global Var
-	dealer: false,
-	dealers: [],
+core.registerModule('mdv_session',function(sb){
+	// Private Var
+	var priFace = {};
+	priFace.dealer = false;
+	priFace.dealers = [];
 	
 	// Table view
-	table: core.ui.getTableView(),
+	priFace.table = sb.ui.getTableView();
 	
 	// Windows
-	mainWindow : core.ui.getWindow({ title:'Pick a dealer' }),
-	
-	// Main Tab
-	/*tab : core.ui.getTab({  
-			icon:'KS_nav_ui.png',
-			title:'Scanner'
-	}),*/
+	priFace.mainWindow = core.ui.getWindow({ title:'Pick a dealer' });
 	
 	// Event Handlers
-	clickDealerRow : function(e){
-		//Ti.API.info( 'ROW: ');
-		//Ti.API.info( e.rowData.dealerInfo );
+	priFace.clickDealerRow = function(e){
+		// Create an object for this dealer
 		var dealer = e.rowData.dealerInfo;
 		
-		// Set global clientID
-		//Ti.App.session.dealer = dealer;
-		
+		Ti.API.info( 'About to fire event for selected Dealer: '+dealer.BUSINESS_NAME);
 		// Publish event 
-		core.publish('mdv-session-picked-dealer', dealer);
-	}
-};
-
-// Arrange Components
-Ti.App.session.mainWindow.add(Ti.App.session.table);
-
-// Fetch all the clients when app loads
-Ti.App.session.mainWindow.addEventListener('open',function(){
-	// Check to make sure we have no clients
-	if( Ti.App.session.dealers.length > 0 ) {
-		return;
-	}
+		//sb.publish('mdv-session-picked-dealer', dealer);
+		//Ti.App.fireEvent( 'mdv-session-picked-dealer', dealer );
+		Ti.App.publish( 'mdv-session-picked-dealer', dealer );
+	};
 	
-	// MDV API: /getDealers
-	core.mdv_api.getDealers(function(clients){
-		// Check for error
-		if( clients[0] && clients[0].error ) {
-			alert(clients[0].message);
+	// Events
+	priFace.table.addEventListener('click', priFace.clickDealerRow );
+	priFace.mainWindow.addEventListener('open',function(){
+		// Check to make sure we have no clients
+		if( priFace.dealers.length > 0 ) {
+			return;
 		}
-		
-		// Save clients
-		Ti.App.session.dealers = clients;
-		//Ti.API.info("Captured clients?: "+JSON.stringify(Ti.App.session.clients));
-		var data = [];
-		
-		// Iterate through clients and make table data
-		for( var i=0; i < clients.length; i++ ) {
+
+		// Ask Sandbox for MDV_API via sandbox
+		sb.use('mdv_api',function(mdv_api){
+			// Log entry for debug
+			Ti.API.info("mdv-session: Sandbox granted mdv-api object.");
 			
-			// Get dealer object
-			var dealer = clients[i];
+			// Make API call
+			// MDV API: /getDealers
+			mdv_api.getDealers(function(clients){
+				// Check for error
+				if( clients[0] && clients[0].error ) {
+					alert(clients[0].message);
+				}
+
+				// Save clients
+				priFace.dealers = clients;
+				//Ti.API.info("Captured clients?: "+JSON.stringify(Ti.App.session.clients));
+				var data = [];
+
+				// Iterate through clients and make table data
+				for( var i=0; i < clients.length; i++ ) {
+					// Get dealer object
+					var dealer = clients[i];
+
+					// Add to collection
+					data.push({
+						title:dealer.BUSINESS_NAME,
+						dealerInfo:dealer
+					});
+				}
+				// Add rows to table
+				priFace.table.data = data;
+
+			}); // END API CALL
 			
-			// Add to collection
-			data.push({
-				title:dealer.BUSINESS_NAME,
-				dealerInfo:dealer
-			});
-		}
-		// Add rows to table
-		Ti.App.session.table.addEventListener('click', Ti.App.session.clickDealerRow )
-			
-		Ti.App.session.table.data = data;
-		
-	});
+		}); // END sb.use()
+	}); // END addEventListener()
 	
+	// Arrange all our components.
+	priFace.mainWindow.add( priFace.table );
+	
+	// Return our interface
+	return {
+		// Return the main window if they ask for it
+		getWindow: function(){
+			return priFace.mainWindow;
+		},
+		
+		// Return a tab with this window
+		getTab: function(opts){
+			var tabOpts = opts || {};
+			var tmpTab = sb.ui.getTab( tabOpts );
+			tmpTab.add( priFace.mainWindow );
+			return tmpTab;
+		}
+	};
 });

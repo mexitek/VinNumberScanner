@@ -25,7 +25,7 @@ Ti.UI.setBackgroundColor('#FFFFFF');
 // = Application Layout and Content Below =
 // ========================================
 
-Ti.include('scanner.js');
+//Ti.include('scanner.js');
 Ti.include('session.js');
 
 
@@ -35,24 +35,18 @@ Ti.include('session.js');
 *
 *	The routing decides when certain windows are openned. Basically
 *	subscribes for specific events and maybe publishes a few.
-
+*/
 
 
 // Start App
-Ti.App.session.mainWindow.open();
+core.mdv_session.getWindow().open();
 
 // If session is started (dealer picked), open the VIN input screen
-core.subscribe('mdv-session-picked-dealer',function(dealer){
+Ti.App.subscribe('mdv-session-picked-dealer',function(dealer){
+	// Notify console on activity
 	Ti.API.info("Closing Session Window and Openning Scanner");
-	Ti.App.session.mainWindow.close();
-	Ti.App.scanner.scannerWindow.open();
-});*/
-Ti.App.scanner.scannerWindow.open();
-// Application Tab Group
-//var tabGroup = core.ui.getTabGroup();
-
-// Application Tabs  
-//tabGroup.addTab( Ti.App.scanner.tab );
-
-// Open Application
-//™tabGroup.open();*/
+	// Swap app windows
+	core.mdv_session.getWindow().close();
+	Ti.include('scanner.js');
+	core.mdv_scanner.getWindow().open();
+});
