@@ -31,7 +31,7 @@ core.registerModule('mdv_api',function(sb){
 		
 		getVehicles: function(VIN,callback) {},
 		postTimeBracket: function(data,callback) {},
-		updateVehicle: function(data,callback) {},
+		updateVehicle: function(data,callback) {}
 		
 	};
 	
